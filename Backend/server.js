@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const dotenv = require('dotenv');
-dotenv.config();
+const path = require('path');
+dotenv.config({ path: path.join(__dirname, '.env') });
 const connectDB = require('./Config/db');
+const seedProducts = require('./Utils/seedProducts');
 const userRoute = require('./Routes/UserRoute');
 const adminRoute = require('./Routes/AdminRoute');
 const cartRoute = require('./Routes/CartRoute');
@@ -13,11 +14,7 @@ const productsRoute = require('./Routes/ProductsRoute');
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
 
-connectDB();
-
 const app = express();
-
-const path = require('path');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -62,6 +59,19 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const startServer = async () => {
+  await connectDB();
+  const addedProducts = await seedProducts({ onlyWhenEmpty: true });
+  if (addedProducts > 0) {
+    console.log(`Added ${addedProducts} starter products to the empty catalog.`);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+startServer().catch((error) => {
+  console.error('Server startup error:', error);
+  process.exit(1);
 });

@@ -1,13 +1,18 @@
+import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react";
 
 const INSTAGRAM_URL = "https://www.instagram.com/asfoetida_hing?utm_source=qr";
 
-const quickLinks = ["Products", "Dashboard", "Contact Us", "About Us"];
-const resources = [
-  "Certifications",
-  "Quality Reports",
-  "Shipping Info",
-  "Terms & Conditions",
+const quickLinks = [
+  { label: "Browse products", to: "/products" },
+  { label: "Contact us", to: "/contact" },
+  { label: "View cart", to: "/cart" },
+  { label: "My orders", to: "/orders" },
+];
+const accountLinks = [
+  { label: "Sign in", to: "/login" },
+  { label: "Create account", to: "/verify-email" },
+  { label: "My profile", to: "/profile" },
 ];
 
 export default function Footer() {
@@ -27,15 +32,15 @@ export default function Footer() {
         {/* Top: brand mark */}
         <div className="flex flex-col gap-3 mb-16 max-w-xl">
           <span className="text-[13px] tracking-[0.25em] uppercase text-[#E8A33D] font-medium">
-            Est. Wholesale &amp; Export
+            Wholesale Hing Supplier
           </span>
           <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-[1.1] text-stone-50">
             Paka Nafsa Trading
             <span className="block text-stone-500">Private Limited</span>
           </h2>
           <p className="text-stone-400 leading-7 text-[16px] mt-2">
-            Sourced, graded, and shipped from Delhi &mdash; hing trusted by
-            kitchens and traders across the country.
+            Hing for retailers, kitchens and spice businesses. Browse product
+            details, wholesale pricing and order requirements.
           </p>
         </div>
 
@@ -47,10 +52,10 @@ export default function Footer() {
               Quick Links
             </h3>
             <ul className="space-y-4 text-[16px]">
-              {quickLinks.map((label) => (
-                <li key={label}>
-                  <a
-                    href="#"
+              {quickLinks.map(({ label, to }) => (
+                <li key={to}>
+                  <Link
+                    to={to}
                     className="group inline-flex items-center gap-1.5 text-stone-300 hover:text-[#E8A33D] transition-colors duration-200"
                   >
                     {label}
@@ -58,22 +63,22 @@ export default function Footer() {
                       size={14}
                       className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
                     />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
-          {/* Resources */}
-          <nav aria-label="Resources">
+          {/* Account */}
+          <nav aria-label="Account">
             <h3 className="text-[13px] tracking-[0.2em] uppercase text-stone-500 mb-6 font-medium">
-              Resources
+              Account
             </h3>
             <ul className="space-y-4 text-[16px]">
-              {resources.map((label) => (
-                <li key={label}>
-                  <a
-                    href="#"
+              {accountLinks.map(({ label, to }) => (
+                <li key={to}>
+                  <Link
+                    to={to}
                     className="group inline-flex items-center gap-1.5 text-stone-300 hover:text-[#E8A33D] transition-colors duration-200"
                   >
                     {label}
@@ -81,7 +86,7 @@ export default function Footer() {
                       size={14}
                       className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
                     />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

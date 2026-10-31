@@ -19,6 +19,10 @@ export function getImageUrl(image) {
     return trimmedUrl;
   }
 
+  if (trimmedUrl.startsWith("/") && !/^\/assests\//i.test(trimmedUrl)) {
+    return trimmedUrl;
+  }
+
   const normalized = normalizeAssetPath(trimmedUrl);
 
   try {

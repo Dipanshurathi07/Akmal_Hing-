@@ -1,32 +1,29 @@
-const express = require('express');
 const mongoose = require('mongoose');
-const User = require('./Models/User');
 const dotenv = require('dotenv');
-const products = require("./Products/product");
-const Product = require('./Models/Products');
+const seedProducts = require('./Utils/seedProducts');
+const path = require('path');
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected!'));
-
-const seedUsers = async () => {
-  try {
-    await User.deleteMany({}); // Clear existing users
-    await Product.deleteMany({}); // Clear existing products
-    await Product.insertMany(products);
-    console.log('Products seeded successfully!');
-    const users = await User.create({
-      name : "Akmal",
-      email : "akmal@example.com",
-      role : "admin",
-      password : "123456789",
-      Contact : 9876543210
-    })
-    await users.save();
-    console.log('Users seeded successfully!');
-  } catch (error) {
-    console.error('Error seeding users:', error);
+const runSeed = async () => {
+  const uri = process.env.MONGODB_URI?.trim();
+  if (!uri || !/^mongodb(?:\+srv)?:\/\//i.test(uri)) {
+    throw new Error('MONGODB_URI must start with mongodb:// or mongodb+srv://. Check Backend/.env before seeding.');
   }
-}
-seedUsers();
+
+  try {
+    await mongoose.connect(uri);
+    const added = await seedProducts();
+    console.log(`Product catalog ready. Added ${added} missing products.`);
+  } catch (error) {
+    console.error('Error seeding products:', error);
+    process.exitCode = 1;
+  } finally {
+    await mongoose.disconnect();
+  }
+};
+
+runSeed().catch((error) => {
+  console.error('Error seeding products:', error.message);
+  process.exitCode = 1;
+});

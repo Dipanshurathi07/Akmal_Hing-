@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "dev": "npm --prefix Turmeric_WholeSale run dev"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
     "axios": "^1.17.0",

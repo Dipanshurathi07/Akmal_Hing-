@@ -116,7 +116,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* relative wrapper lets us truly center the nav links regardless of
             how wide the logo or right-side icon group are */}
-        <div className="relative flex items-center justify-between h-16 sm:h-24">
+        <div className="relative flex items-center justify-between h-16 sm:h-[76px]">
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 sm:gap-4 flex-shrink-0 group z-10">
@@ -150,7 +150,7 @@ function Navbar() {
                   to="/cart"
                   className="relative p-3 text-gray-500 hover:text-amber-800 hover:bg-amber-50 dark:text-gray-400 dark:hover:text-amber-300 dark:hover:bg-amber-950 rounded-xl transition-all"
                 >
-                  <ShoppingCart size={26} strokeWidth={1.8} />
+                  <ShoppingCart size={22} strokeWidth={1.8} />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-amber-800 text-amber-100 text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center">
                       {cartCount > 9 ? "9+" : cartCount}
@@ -161,7 +161,7 @@ function Navbar() {
                   to="/orders"
                   className="relative p-3 text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 dark:text-gray-400 dark:hover:text-emerald-400 dark:hover:bg-emerald-950 rounded-xl transition-all"
                 >
-                  <Package size={26} strokeWidth={1.8} />
+                  <Package size={22} strokeWidth={1.8} />
                   {confirmedCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-emerald-700 text-emerald-100 text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center">
                       {confirmedCount > 9 ? "9+" : confirmedCount}

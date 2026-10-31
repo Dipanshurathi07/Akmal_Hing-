@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux'
@@ -7,12 +7,13 @@ import { getImageUrl } from '../Utils/getImageUrl';
 import { addToCart } from '../Redux/Slice/CartSlice';
 
 function ProductDetails() {
-  const {product,loading,error}=useSelector((state)=>state.products);
+  const {product}=useSelector((state)=>state.products);
   const {user} = useSelector((state)=>state.auth);
   const dispatch = useDispatch();
   const { productId } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
+  const isPreview = String(product?._id || "").startsWith("preview-");
   useEffect(()=>{
     if (productId) dispatch(fetchProductById(productId));
   },[dispatch, productId]);
@@ -74,6 +75,12 @@ function ProductDetails() {
               Back to products
             </button>
 
+            {isPreview && (
+              <p className="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
+                Catalog preview: ordering will be available when the backend is connected.
+              </p>
+            )}
+
             <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
             <p className="text-gray-600 mb-6">{product.description}</p>
 
@@ -125,21 +132,30 @@ function ProductDetails() {
                 />
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              {isPreview ? (
                 <button
-                  onClick={handleAddToCart}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-yellow-600 px-6 py-3 text-white font-semibold hover:bg-yellow-700 transition"
+                  onClick={() => navigate('/contact')}
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-yellow-600 px-6 py-3 font-semibold text-white transition hover:bg-yellow-700"
                 >
-                  <ShoppingCart size={18} />
-                  Add to Cart
+                  Enquire about this product
                 </button>
-                <button
-                  onClick={() => navigate('/cart')}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-yellow-600 px-6 py-3 text-yellow-700 font-semibold hover:bg-yellow-50 transition"
-                >
-                  Go to Cart
-                </button>
-              </div>
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <button
+                    onClick={handleAddToCart}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-yellow-600 px-6 py-3 text-white font-semibold hover:bg-yellow-700 transition"
+                  >
+                    <ShoppingCart size={18} />
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={() => navigate('/cart')}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-yellow-600 px-6 py-3 text-yellow-700 font-semibold hover:bg-yellow-50 transition"
+                  >
+                    Go to Cart
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

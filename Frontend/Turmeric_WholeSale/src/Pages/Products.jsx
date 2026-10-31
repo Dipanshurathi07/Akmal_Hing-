@@ -7,18 +7,16 @@ import { useNavigate } from "react-router-dom";
 import {
   ShoppingCart,
   Package,
-  UserRoundIcon,
 } from "lucide-react";
 import { getImageUrl } from '../Utils/getImageUrl';
 function Products() {
   const navigate = useNavigate();
   const [quantities, setQuantities] = useState({});
-  const {products,loading,error} = useSelector((state)=>state.products);
+  const {products,loading,isPreview} = useSelector((state)=>state.products);
   const {user} = useSelector((state)=>state.auth);
   const dispatch = useDispatch();
   useEffect(()=>{
     dispatch(fetchAllProducts());
-    console.log("Products loaded:", products);
   },[dispatch])
 
 
@@ -65,6 +63,16 @@ function Products() {
           </p>
 
         </div>
+
+        {isPreview && (
+          <div className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
+            <strong>Catalog preview:</strong> These products are available to browse. Connect the backend to place orders.
+          </div>
+        )}
+
+        {loading && products.length === 0 && (
+          <p className="mb-8 text-center text-gray-500">Loading products…</p>
+        )}
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -162,15 +170,22 @@ function Products() {
                   >
                     View Details
                   </Link>
-                  <button
-                    onClick={() =>
-                      handleAddToCart(product)
-                    }
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg transition flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart size={18} />
-                    Add to Cart
-                  </button>
+                  {isPreview ? (
+                    <Link
+                      to="/contact"
+                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg transition flex items-center justify-center gap-2"
+                    >
+                      Enquire to order
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded-lg transition flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart size={18} />
+                      Add to Cart
+                    </button>
+                  )}
                 </div>
 
               </div>

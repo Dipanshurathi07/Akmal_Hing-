@@ -1,19 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../Utils/axiosInstance';
+import { catalogPreview, getPreviewProductById } from '../../Utils/catalogPreview';
 
 export const fetchAllProducts = createAsyncThunk(
   "products/fetchAllProducts",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get('/products');
-
-      return response.data;
+      if (Array.isArray(response.data) && response.data.length === 0 && catalogPreview.length) {
+        return { products: catalogPreview, isPreview: true };
+      }
+      return { products: response.data, isPreview: false };
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || {
-          Message: "No products found",
-        }
-      );
+      if (catalogPreview.length) {
+        return { products: catalogPreview, isPreview: true };
+      }
+
+      return rejectWithValue(error.response?.data || { Message: "No products found" });
     }
   }
 );
@@ -25,7 +28,9 @@ export const fetchProductById = createAsyncThunk(
       const response = await axiosInstance.get(`/products/${id}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching product:", error);
+      const previewProduct = getPreviewProductById(id);
+      if (previewProduct) return previewProduct;
+
       return rejectWithValue(
         error.response?.data || {
           Message: "Product not found",
@@ -89,6 +94,7 @@ export const deleteProduct = createAsyncThunk(
 
 const initialState = {
   products: [],
+  isPreview: false,
   product: null,
   loading: false,
   error: null,
@@ -108,11 +114,13 @@ const productSlice = createSlice({
 
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = Array.isArray(action.payload) ? action.payload : [];
+        state.products = Array.isArray(action.payload.products) ? action.payload.products : [];
+        state.isPreview = action.payload.isPreview;
       })
 
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.loading = false;
+        state.isPreview = false;
         state.error = action.payload;
       })
 
@@ -123,10 +131,12 @@ const productSlice = createSlice({
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.loading = false;
         state.product = action.payload;
+        state.isPreview = String(action.payload?._id || "").startsWith("preview-");
       })
 
       .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;
+        state.isPreview = false;
         state.error = action.payload;
       })
 
